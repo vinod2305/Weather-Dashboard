@@ -1,32 +1,287 @@
 <template>
+  <div v-if='this.dataload == true'>
+  <NavBar class="navbar" v-bind:currently="currently" v-bind:location="location"/>
+<!--
+<div class="search">
+  <div class="text"> <input type="text" placeholder="Enter Location ..." class="searchfield" value=""/></div>
+  <div class="search-button">
+    <button type="button" class="button"><span><i class="material-icons">search</i></span></button>
+  </div>
+</div>
+-->
+
+
+
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+      <div class="grid-container">
+        <div class="Current-Conditions">
+          <CurrentCondition class="currentcondition" v-bind:currently="currently"/>
+        </div>
+        <div class="Hourly-Forecast">
+          <HourlyForecast class="hourlyforecast" v-bind:hourly="hourly"/>
+        </div>
+        <div class="Temperature">
+          <TemperatureGraph class="temperaturegraph" v-bind:hourly="hourly"/>
+        </div>
+        <div class="Today">
+          <TodayStats class="todaystats" v-bind:daily="daily"/>
+        </div>
+        <div class="Wind">
+          <WindStats class="windstats" v-bind:currently="currently"/>
+        </div>
+        <div class="Cloud-Cover">
+          <CloudCover class="cloudcover" v-bind:currently="currently"/>
+        </div>
+      </div>      
+  </div>
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import axios from 'axios'
+import Vue from 'vue'
+import CurrentCondition from '@/components/CurrentCondition.vue'
+import HourlyForecast from '@/components/HourlyForecast.vue'
+import TemperatureGraph from '@/components/TemperatureGraph.vue'
+import TodayStats from '@/components/TodayStats.vue'
+import WindStats from '@/components/WindStats.vue'
+import CloudCover from '@/components/CloudCover.vue'
+import NavBar from '@/components/NavBar.vue'
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+export default {
+  name: 'App',
+  components: {
+    CurrentCondition,
+    HourlyForecast,
+    TemperatureGraph,
+    CloudCover,
+    WindStats,
+    TodayStats,
+    NavBar
+  },
+  mounted(){
+    this.getLocation()
+    
+  },
+  data(){
+    return{
+      currently : {},
+      hourly : {},
+      daily : {},
+      dataload : false,
+      latitude : 0,
+      longitude : 0,
+      location: {
+        city: '',
+        country: '',
+        state: ''
+      }
     }
+  },
+  methods:{
+    getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(this.showPosition);
+      }
+    },
+    showPosition(position) {
+      this.latitude =  position.coords.latitude.toFixed(4);
+      this.longitude = position.coords.longitude.toFixed(4);
+      this.requestData()
+    },
+    requestData(){
+      axios.get('https://api.opencagedata.com/geocode/v1/json?q='+this.latitude+'+'+this.longitude+'&key=e01586a1ad4f4909b38222a4a022c98b')
+          .then(response => {
+            console.log(response.data.results[0].components)
+            this.location.city = response.data.results[0].components.city
+            this.location.country = response.data.results[0].components.country_code
+            this.location.state = response.data.results[0].components.state_code
+          })
+          .catch(err => {
+            this.errorMessage = err.response.data.error
+            this.showError = true
+          })
+      axios.get('https://csm.fusioncharts.com/files/assets/wb/wb-data.php?src=darksky&lat='+this.latitude+'&long='+this.longitude+'?units=si&exclude=hourly,flags,offset')
+          .then(response => {
+            Vue.set(this.$data, 'currently', response.data.currently)
+            Vue.set(this.$data, 'hourly', response.data.hourly)
+            Vue.set(this.$data, 'daily', response.data.daily)
+            this.dataload = true
+          })
+          .catch(err => {
+            this.errorMessage = err.response.data.error
+            this.showError = true
+          })
+    },
   }
 }
+</script>
+
+<style lang="scss">
+
+  
+body{
+  background: 	#FFFAFA;
+  margin: 0;
+}
+#app {
+  
+  font-family: 'Nunito Sans', sans-serif;
+  text-align: center;
+  color: #2c3e50;
+  position: relative;
+  padding: 50px;
+  background: 	#FFFAFA;
+}
+
+
+
+.text { grid-area: text; }
+
+.search-button { grid-area: search-button; }
+
+.search{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.8fr 0.2fr;
+  grid-template-rows: 1.4fr ;
+  gap: 1px 1px;
+  grid-template-areas: "text text text search-button" ;
+  width: 100%;
+  font-size: 0;
+  background: #fff;
+  border: 5px solid #7ad3f7;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+
+  .searchfield{
+    font-family: 'Nunito Sans', sans-serif;
+    float: left;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    font-size: 33px;
+    font-weight: 600;
+    padding: 0 0 0 15px;
+    background: #fff;
+    color: #4D8DCB;
+    border: 0;
+    outline-width: 0;
+  }
+  .button{
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 0;
+    background: #fff;
+    color: #5CA4EA;
+    font-size: 20px;
+    padding: 0;
+    top: 3px;
+    outline-width: 0;
+
+  .material-icons{
+    font-size: 40px;
+    
+  }
+    
+  }
+
+}
+
+.grid-container {
+  
+  display: grid;
+  grid-template-columns: 1fr 0.4fr 1.4fr 1.2fr;
+  grid-template-rows: .7fr 1fr .7fr;
+  gap: 50px 50px;
+  grid-template-areas: "Current-Conditions Hourly-Forecast Hourly-Forecast Hourly-Forecast" "Temperature Temperature Temperature Temperature" "Today Today Wind Cloud-Cover";
+}
+
+.Current-Conditions { grid-area: Current-Conditions; }
+
+.Hourly-Forecast { grid-area: Hourly-Forecast; }
+
+.Temperature { grid-area: Temperature; }
+
+.Today { grid-area: Today; }
+
+.Wind {
+  
+  grid-area: Wind;
+}
+
+.Cloud-Cover {
+  
+  grid-area: Cloud-Cover;
+}
+
+
+@media only screen and (max-width: 1215px) {
+ 
+  #app {
+  
+  font-family: 'Nunito Sans', sans-serif;
+  text-align: center;
+  color: #2c3e50;
+  position: relative;
+ width: 100%;
+  padding: 15px 15px 40px 15px;
+  background: 	#FFFAFA;
+}
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.31fr 1.3fr 0.2fr .5fr 0.32fr 0.2fr ;
+    gap: 40px 10px;
+   
+    grid-template-areas: "Current-Conditions" "Hourly-Forecast" "Temperature" "Today" "Wind" "Cloud-Cover" ;
+    
+  }
+
+  .Current-Conditions { grid-area: Current-Conditions;
+  margin-right: 15px;
+  margin-left: 15px;
+  }
+
+  .Hourly-Forecast { grid-area: Hourly-Forecast; 
+     width: 70%;
+     display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 15%;
+
+     
+  }
+
+  .Temperature { grid-area: Temperature; 
+  margin-right: 4px;
+  margin-left: 4px;
+  }
+
+  .Today { grid-area: Today; 
+   width: 80%;
+     display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10%;
+  }
+
+  .Wind { grid-area: Wind; 
+   width: 70%;
+     display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 15%;
+  }
+
+  .Cloud-Cover { grid-area: Cloud-Cover;
+     width: 70%;
+     display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 15%;
+   }
+  }
 </style>
