@@ -162,7 +162,7 @@ body{
 
 .mssg{
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 90px;
+  font-size: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
