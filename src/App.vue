@@ -1,16 +1,15 @@
 <template>
+<div v-if="this.locationload">
   <div v-if='this.dataload == true'>
   <NavBar class="navbar" v-bind:currently="currently" v-bind:location="location"/>
-<!--
+  <!--
 <div class="search">
-  <div class="text"> <input type="text" placeholder="Enter Location ..." class="searchfield" value=""/></div>
+  <div class="text"> <input type="text" ref="autocomplete" placeholder="Enter Location" class="searchfield search-location" onfocus="value = ''" /></div>
   <div class="search-button">
     <button type="button" class="button"><span><i class="material-icons">search</i></span></button>
   </div>
 </div>
 -->
-
-
 
   <div id="app">
       <div class="grid-container">
@@ -35,6 +34,12 @@
       </div>      
   </div>
   </div>
+  </div>
+  <div v-else>
+    <div class="mssg">
+    {{this.locationstatus}}
+    </div>
+  </div>
 </template>
 
 <script>
@@ -47,6 +52,7 @@ import TodayStats from '@/components/TodayStats.vue'
 import WindStats from '@/components/WindStats.vue'
 import CloudCover from '@/components/CloudCover.vue'
 import NavBar from '@/components/NavBar.vue'
+
 
 export default {
   name: 'App',
@@ -61,7 +67,7 @@ export default {
   },
   mounted(){
     this.getLocation()
-    
+
   },
   data(){
     return{
@@ -75,19 +81,38 @@ export default {
         city: '',
         country: '',
         state: ''
-      }
+      },
+      locationstatus: '',
+      locationload : false,
+      address: ''
     }
   },
   methods:{
     getLocation() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(this.showPosition);
+        navigator.geolocation.getCurrentPosition(this.showPosition, this.showError);
       }
     },
     showPosition(position) {
       this.latitude =  position.coords.latitude.toFixed(4);
       this.longitude = position.coords.longitude.toFixed(4);
       this.requestData()
+    },
+    showError(error) {
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          this.locationstatus = "User denied the request for Geolocation."
+          break;
+        case error.POSITION_UNAVAILABLE:
+          this.locationstatus = "Location information is unavailable."
+          break;
+        case error.TIMEOUT:
+          this.locationstatus = "The request to get user location timed out."
+          break;
+        case error.UNKNOWN_ERROR:
+          this.locationstatus = "An unknown error occurred."
+          break;
+      }
     },
     requestData(){
       axios.get('https://api.opencagedata.com/geocode/v1/json?q='+this.latitude+'+'+this.longitude+'&key=e01586a1ad4f4909b38222a4a022c98b')
@@ -96,6 +121,7 @@ export default {
             this.location.city = response.data.results[0].components.city
             this.location.country = response.data.results[0].components.country_code
             this.location.state = response.data.results[0].components.state_code
+            this.locationload=true
           })
           .catch(err => {
             this.errorMessage = err.response.data.error
@@ -134,7 +160,13 @@ body{
   background: 	#FFFAFA;
 }
 
-
+.mssg{
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .text { grid-area: text; }
 

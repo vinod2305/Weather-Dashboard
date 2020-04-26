@@ -30,20 +30,17 @@ export default {
           this.dataload = true
       },
       unix_timeconvertor(UNIX_timestamp){
-        var a = new Date(UNIX_timestamp * 1000);
-        var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-        var year = a.getFullYear();
-        var month = months[a.getMonth()];
-        var date = a.getDate();
-        var hour = a.getHours();
-        var min = a.getMinutes();
-        if (hour.length == 1)
-        hour = '0'+hour
-        if (min.length == 1)
-        min = '0'+min
-        var info= hour + ':' + min 
-        var time = date + ' ' + month + ' ' + year + '   •   ' + this.tConvert(info) ;
-        return time;
+      var a = new Date(UNIX_timestamp * 1000);
+      var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      var year = a.getFullYear();
+      var month = months[a.getMonth()];
+      var date = a.getDate();
+      var hours = a.getHours() < 10 ? '0' + a.getHours() : a.getHours();
+      var minutes = a.getMinutes() < 10 ? '0' + a.getMinutes() : a.getMinutes();
+      var formattedTime = hours + ':' + minutes;
+      var time = date+ " " + month + " " + year+ "	• " +this.tConvert(formattedTime);
+      return time;  
+
 },
     tConvert (time24) {
       var ts = time24;
@@ -51,7 +48,7 @@ export default {
       var h = (H % 12) || 12;
       h = (h < 10)?("0"+h):h;  
       var ampm = H < 12 ? " am" : " pm";
-      ts = h +""+ ts.substr(2, 3) + ampm;
+      ts = h + ts.substr(2, 3) + ampm;
       return ts;
     }
     }
