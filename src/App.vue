@@ -66,6 +66,7 @@ export default {
     NavBar
   },
   mounted(){
+  
     this.getLocation()
 
   },
@@ -144,7 +145,29 @@ export default {
 </script>
 
 <style lang="scss">
-
+#loader { 
+            border: 12px solid #f3f3f3; 
+            border-radius: 50%; 
+            border-top: 12px solid #444444; 
+            width: 80px; 
+            height: 80px; 
+            animation: spin 1s linear infinite; 
+        } 
+          
+        @keyframes spin { 
+            100% { 
+                transform: rotate(360deg); 
+            } 
+        } 
+          
+        .center { 
+            position: absolute; 
+            top: 0; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            margin: auto; 
+        } 
   
 body{
   background: 	#FFFAFA;

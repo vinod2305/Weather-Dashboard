@@ -7,7 +7,7 @@
     <div class="cloud-icon">
       <span class="iconify" data-icon="bi:cloud-fill" data-inline="false"></span>
     </div>
-    <div class="cloud-data">{{currently.cloudCover * 100}}%</div>
+    <div class="cloud-data">{{parseInt(currently.cloudCover * 100)}}%</div>
   </div>
   </div>
 </template>
@@ -58,6 +58,7 @@ export default {
   }
   .cloud-data{
     margin-top: -80px;
+    transform: translateY(-20px);
     font-size: 38px;
     font-weight: 800;
   }
