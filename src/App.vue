@@ -226,7 +226,7 @@ body{
 .search-button { grid-area: search-button; }
 
 .search{
-  margin-left: 50%;
+  margin-top: 50%;
   display: grid;
   grid-template-columns: 1fr 1fr 1.8fr 0.2fr;
   grid-template-rows: 1fr ;
