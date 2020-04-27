@@ -100,6 +100,10 @@ export default {
       this.requestData()
     },
     showError(error) {
+      if(error.message.startsWith("Only secure origins are allowed")){
+        this.locationstatus = "Only secure origins are allowed"
+        return
+      }
       switch(error.code) {
         case error.PERMISSION_DENIED:
           this.locationstatus = "User denied the request for Geolocation."
