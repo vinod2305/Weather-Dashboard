@@ -36,14 +36,14 @@
   </div>
   </div>
   <div v-else>
-    <div class="mssg">
-    <div class="search">
+
+    <div class="search" style="margin-top: 30%">
       <div class="text"> <input type="text"  v-model="locationcity"  ref="autocomplete" placeholder="Enter City ..." class="searchfield search-location" onfocus="value = ''" /></div>
       <div class="search-button">
       <button type="button" v-on:click="locationAcess" class="button"><i class="material-icons">search</i></button>
       </div>
     </div>
-    </div>
+
   </div>
 </template>
 
@@ -226,7 +226,6 @@ body{
 .search-button { grid-area: search-button; }
 
 .search{
-  margin-top: 50%;
   display: grid;
   grid-template-columns: 1fr 1fr 1.8fr 0.2fr;
   grid-template-rows: 1fr ;
