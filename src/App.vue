@@ -4,7 +4,7 @@
   <NavBar class="navbar" v-bind:currently="currently" v-bind:location="location"/>
   
 <div class="search">
-  <div class="text"> <input type="text"  v-model="locationcity"  ref="autocomplete" placeholder="Enter Location" class="searchfield search-location" onfocus="value = ''" /></div>
+  <div class="text"> <input type="text"  v-model="locationcity"  ref="autocomplete" placeholder="Enter City ..." class="searchfield search-location" onfocus="value = ''" /></div>
   <div class="search-button">
     <button type="button" v-on:click="locationAcess" class="button"><i class="material-icons">search</i></button>
   </div>
@@ -38,7 +38,7 @@
   <div v-else>
     <div class="mssg">
     <div class="search">
-      <div class="text"> <input type="text"  v-model="locationcity"  ref="autocomplete" placeholder="Enter Location" class="searchfield search-location" onfocus="value = ''" /></div>
+      <div class="text"> <input type="text"  v-model="locationcity"  ref="autocomplete" placeholder="Enter City ..." class="searchfield search-location" onfocus="value = ''" /></div>
       <div class="search-button">
       <button type="button" v-on:click="locationAcess" class="button"><i class="material-icons">search</i></button>
       </div>
@@ -306,6 +306,57 @@ body{
 
 
 @media only screen and (max-width: 1215px) {
+  .search{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.8fr 0.2fr;
+  grid-template-rows: 1fr ;
+  gap: 1px 1px;
+  grid-template-areas: "text text text search-button" ;
+  width: 90%;
+  margin-left: 5%;
+  font-size: 0;
+  background: #fff;
+  border: 2px solid #7ad3f7;
+  border-radius: 10px;
+  padding: 1px;
+  box-sizing: border-box;
+
+  .searchfield{
+    font-family: 'Nunito Sans', sans-serif;
+    float: left;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0 0 0 15px;
+    background: #fff;
+    color: #4D8DCB;
+    border: 0;
+    outline-width: 0;
+  }
+  .button{
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 0;
+    background: #fff;
+    color: #5CA4EA;
+    font-size: 20px;
+    padding: 0;
+    top: 3px;
+    outline-width: 0;
+
+  .material-icons{
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+    
+  }
+
+}
  
   #app {
   
