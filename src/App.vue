@@ -2,14 +2,14 @@
 <div v-if="this.locationload">
   <div v-if='this.dataload == true'>
   <NavBar class="navbar" v-bind:currently="currently" v-bind:location="location"/>
-  <!--
+  
 <div class="search">
-  <div class="text"> <input type="text" ref="autocomplete" placeholder="Enter Location" class="searchfield search-location" onfocus="value = ''" /></div>
+  <div class="text"> <input type="text"  v-model="locationcity"  ref="autocomplete" placeholder="Enter Location" class="searchfield search-location" onfocus="value = ''" /></div>
   <div class="search-button">
-    <button type="button" class="button"><span><i class="material-icons">search</i></span></button>
+    <button type="button" v-on:click="locationAcess" class="button"><i class="material-icons">search</i></button>
   </div>
 </div>
--->
+
 
   <div id="app">
       <div class="grid-container">
@@ -23,7 +23,7 @@
           <TemperatureGraph class="temperaturegraph" v-bind:hourly="hourly"/>
         </div>
         <div class="Today">
-          <TodayStats class="todaystats" v-bind:daily="daily"/>
+          <TodayStats class="todaystats" v-bind:daily="daily" v-bind:location="location"/>
         </div>
         <div class="Wind">
           <WindStats class="windstats" v-bind:currently="currently"/>
@@ -37,7 +37,12 @@
   </div>
   <div v-else>
     <div class="mssg">
-    {{this.locationstatus}}
+    <div class="search">
+      <div class="text"> <input type="text"  v-model="locationcity"  ref="autocomplete" placeholder="Enter Location" class="searchfield search-location" onfocus="value = ''" /></div>
+      <div class="search-button">
+      <button type="button" v-on:click="locationAcess" class="button"><i class="material-icons">search</i></button>
+      </div>
+    </div>
     </div>
   </div>
 </template>
@@ -81,8 +86,10 @@ export default {
       location: {
         city: '',
         country: '',
-        state: ''
+        state: '',
+        timezone: ''
       },
+      locationcity: '',
       locationstatus: '',
       locationload : false,
       address: ''
@@ -90,16 +97,20 @@ export default {
   },
   methods:{
     getLocation() {
+      
       if (navigator.geolocation) {
+        console.log(navigator.geolocation)
         navigator.geolocation.getCurrentPosition(this.showPosition, this.showError);
       }
     },
     showPosition(position) {
+      
       this.latitude =  position.coords.latitude.toFixed(4);
       this.longitude = position.coords.longitude.toFixed(4);
       this.requestData()
     },
     showError(error) {
+      console.log(error)
       if(error.message.startsWith("Only secure origins are allowed")){
         this.locationstatus = "Only secure origins are allowed"
         return
@@ -120,12 +131,14 @@ export default {
       }
     },
     requestData(){
+   
       axios.get('https://api.opencagedata.com/geocode/v1/json?q='+this.latitude+'+'+this.longitude+'&key=e01586a1ad4f4909b38222a4a022c98b')
           .then(response => {
-            console.log(response.data.results[0].components)
+            console.log(response.data)
             this.location.city = response.data.results[0].components.city
             this.location.country = response.data.results[0].components.country_code
             this.location.state = response.data.results[0].components.state_code
+            this.location.timezone = response.data.results[0].annotations.timezone.name
             this.locationload=true
           })
           .catch(err => {
@@ -144,6 +157,19 @@ export default {
             this.showError = true
           })
     },
+    locationAcess(){
+      axios.get('https://us1.locationiq.com/v1/search.php?key=879eff1bd6c48b&q='+this.locationcity+'&format=json')
+          .then(response => {
+            this.dataload = false
+            this.latitude = response.data[0].lat.substring(0, response.data[0].lat.length - 3);
+            this.longitude = response.data[0].lon.substring(0, response.data[0].lon.length - 3);
+            this.requestData()
+          })
+          .catch(err => {
+            this.errorMessage = err
+            this.showError = true
+          })
+    }
   }
 }
 </script>
@@ -202,15 +228,16 @@ body{
 .search{
   display: grid;
   grid-template-columns: 1fr 1fr 1.8fr 0.2fr;
-  grid-template-rows: 1.4fr ;
+  grid-template-rows: 1fr ;
   gap: 1px 1px;
   grid-template-areas: "text text text search-button" ;
-  width: 100%;
+  width: 60%;
+  margin-left: 20%;
   font-size: 0;
   background: #fff;
-  border: 5px solid #7ad3f7;
+  border: 2px solid #7ad3f7;
   border-radius: 10px;
-  padding: 20px;
+  padding: 5px;
   box-sizing: border-box;
 
   .searchfield{
@@ -219,7 +246,7 @@ body{
     width: 100%;
     height: 100%;
     border-radius: 0;
-    font-size: 33px;
+    font-size: 23px;
     font-weight: 600;
     padding: 0 0 0 15px;
     background: #fff;
@@ -241,7 +268,9 @@ body{
 
   .material-icons{
     font-size: 40px;
-    
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
     
   }

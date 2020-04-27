@@ -51,10 +51,11 @@
 </template>
 
 <script>
+import moment from 'moment-timezone'
 import RadialProgressBar from 'vue-radial-progress'
 export default {
   name: 'TodayStats',
-  props: ['daily'],
+  props: ['daily', 'location'],
   data () {
     return {
       startColor: "#1977f9",
@@ -70,24 +71,11 @@ export default {
   },
   methods:{
     unix_timeconvertor(UNIX_timestamp){
-      var a = new Date(UNIX_timestamp * 1000);
-      var hour = a.getHours().toString();
-      var min = a.getMinutes().toString();
-      if (hour.length == 1)
-        hour = '0'+hour
-      if (min.length == 1)
-        min = '0'+min
-      var info= hour + ':' + min 
-      return this.tConvert(info);
-},
-    tConvert (time24) {
-      var ts = time24;
-      var H = +ts.substr(0, 2);
-      var h = (H % 12) || 12;
-      h = (h < 10)?("0"+h):h;  
-      var ampm = H < 12 ? " AM" : " PM";
-      ts = h + ts.substr(2, 3) + ampm;
-      return ts;
+      var time = moment
+          .unix(UNIX_timestamp)
+          .tz(this.location.timezone)
+          .format('h:mm A');
+        return time;  
     }
   }
 }

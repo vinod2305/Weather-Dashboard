@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import moment from 'moment-timezone'
+
 export default {
   name: 'NavBar',
   props: ['currently', 'location'],
@@ -29,30 +31,17 @@ export default {
           this.info =this.unix_timeconvertor(this.currently.time);
           this.dataload = true
       },
-      unix_timeconvertor(UNIX_timestamp){
-      var a = new Date(UNIX_timestamp * 1000);
-      var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-      var year = a.getFullYear();
-      var month = months[a.getMonth()];
-      var date = a.getDate();
-      var hours = a.getHours() < 10 ? '0' + a.getHours() : a.getHours();
-      var minutes = a.getMinutes() < 10 ? '0' + a.getMinutes() : a.getMinutes();
-      var formattedTime = hours + ':' + minutes;
-      var time = date+ " " + month + " " + year+ "	• " +this.tConvert(formattedTime);
-      return time;  
 
-},
-    tConvert (time24) {
-      var ts = time24;
-      var H = +ts.substr(0, 2);
-      var h = (H % 12) || 12;
-      h = (h < 10)?("0"+h):h;  
-      var ampm = H < 12 ? " am" : " pm";
-      ts = h + ts.substr(2, 3) + ampm;
-      return ts;
-    }
+      unix_timeconvertor(UNIX_timestamp){
+      var time = moment
+          .unix(UNIX_timestamp)
+          .tz(this.location.timezone)
+          .format('Do MMMM YYYY •  h:mma');
+        return time;  
+
     }
   }
+}
 
 </script>
 
