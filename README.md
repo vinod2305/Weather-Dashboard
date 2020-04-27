@@ -1,4 +1,9 @@
-# weather_dashboard
+# Weather Dashboard
+
+This project was implemented with Vue.js library. There are few apis:
+
+1. Dark Sky API - for fetching weather data
+1. Data was visualized using Vue-chartjs 
 
 ## Project setup
 ```
