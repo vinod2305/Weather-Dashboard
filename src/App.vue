@@ -1,7 +1,8 @@
 <template>
  <div id="app">
   <div v-if="this.locationload">
-    <div v-if="this.dataload == true">
+    <div id="loader" class="center" v-if="loading"></div> 
+    <div v-if="this.dataload == true" id="appdata">
       <NavBar class="navbar" v-bind:currently="currently" v-bind:location="location" />
 
       <div class="search">
@@ -122,7 +123,8 @@ export default {
       locationcity: "",
       locationstatus: "",
       locationload: false,
-      address: ""
+      address: "",
+      loading: true
     };
   },
   methods: {
@@ -179,6 +181,7 @@ export default {
           this.location.timezone =
             response.data.results[0].annotations.timezone.name;
           this.locationload = true;
+          this.loading = false;
         })
         .catch(err => {
           this.errorMessage = err.response.data.error;
