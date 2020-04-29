@@ -56,7 +56,10 @@
     
   </div>
   <div class="search-bar" v-else>
-    <div class="search" style="margin-top: 30%">
+    <div class="text" style="margin-top: 30%;">{{this.locationstatus}}
+      <div>Please enter the city, you want to search about. </div>
+    </div>
+    <div class="search" style="margin-top: 20%;">
       <div class="text">
         <input
           type="text"
@@ -254,6 +257,10 @@ export default {
   margin: auto;
 }
 
+.searchbar{
+  width: 100%;
+  height: 100%;
+}
 body {
   background: #fffafa;
   margin: 0;
