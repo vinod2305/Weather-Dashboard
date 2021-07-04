@@ -1,5 +1,9 @@
 # Weather Dashboard
 
+- Single-page application built with a special emphasis on the UI/UX aspects of development. 
+- Provides a visualization of weather data based on the current location or location of choice using Chart.js.
+
+
 This project was implemented with Vue.js library. Simple weather dashboard built using API's:
 
 1. Dark Sky API - for fetching weather data
